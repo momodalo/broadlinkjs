@@ -112,8 +112,22 @@ Broadlink.prototype.discover = function(){
             }
         }
     }
-    var address = addresses[0].split('.');
-
+if(process.env.IP_PREFIX) {
+    let flag=false;
+	for (let addr of addresses) {
+		if (addr.startsWith(process.env.IP_PREFIX)) {
+			address = addr;
+			flag=true;
+			break;
+		}
+	}
+	if(!flag){
+        throw new Error(`can't find address that starts with ${process.env.IP_PREFIX} `);
+  }
+}else{
+	address = addresses[0];
+}
+address=address.split('.');
     var cs = dgram.createSocket({ type:'udp4', reuseAddr:true});
     cs.on('listening', function(){
         cs.setBroadcast(true);
@@ -162,8 +176,8 @@ Broadlink.prototype.discover = function(){
         checksum = checksum & 0xffff;
         packet[0x20] = checksum & 0xff;
         packet[0x21] = checksum >> 8;
-
-        cs.sendto(packet, 0, packet.length, 80, '255.255.255.255');
+        const BROADCAST_ADDRESS=process.env.BROADCAST_ADDRESS||'255.255.255.255';
+        cs.sendto(packet, 0, packet.length, 80, BROADCAST_ADDRESS);
 
     });
 
