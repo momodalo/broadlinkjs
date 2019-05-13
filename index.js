@@ -61,6 +61,10 @@ Broadlink.prototype.genDevice = function (devtype, host, mac){
         dev = new device(host,mac);
         dev.rm();
         return dev;;
+    }else if(devtype == 0x279D){ // RM Pro Plus
+        dev = new device(host,mac);
+        dev.rm();
+        return dev;;
     }else if(devtype == 0x2783){ // RM2 Home Plus
         dev = new device(host,mac);
         dev.rm();
